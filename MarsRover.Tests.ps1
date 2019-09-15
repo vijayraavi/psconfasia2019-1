@@ -24,6 +24,18 @@ Describe "Set-Rover" {
         $actual = Get-Rover 
         $actual.Direction | Should -Be "E" 
     }
+
+    It "Sets the X position" { 
+        Set-Rover -X 10
+        $actual = Get-Rover 
+        $actual.X | Should -Be 10 
+    }
+
+    It "Sets the Y position" { 
+        Set-Rover -Y 11
+        $actual = Get-Rover
+        $actual.Y | Should -Be 11
+    }
 }
 
 Describe "Move-Rover" {
@@ -88,6 +100,24 @@ Describe "Move-Rover" {
         $actual = Get-Rover
 
         $actual.Direction | Should -Be $Expected
+    }
+
+    It "Moves in the direction <direction>" -TestCases @(
+        @{ X = 0; Y = 0; Direction = "N"; EndX = 0; EndY = 1 }
+        @{ X = 0; Y = 0; Direction = "E"; EndX = 1; EndY = 0 }
+        @{ X = 0; Y = 0; Direction = "S"; EndX = 0; EndY = -1 }
+        @{ X = 0; Y = 0; Direction = "W"; EndX = -1; EndY = 0 }
+        @{ X = -5; Y = 10; Direction = "N"; EndX = -5; EndY = 11 }
+    ) {
+        param ($X, $Y, $Direction, $EndX, $EndY)
+
+        Set-Rover -X $X -Y $Y -Direction $Direction
+        Move-Rover -Instruction "M"
+
+        $rover = Get-Rover
+        $rover.Direction | Should -Be $Direction
+        $rover.X | Should -Be $EndX -Because "X"
+        $rover.Y | Should -Be $EndY -Because "Y"
     }
 }
 
