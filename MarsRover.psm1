@@ -20,13 +20,14 @@ function Move-Rover ($Instruction) {
 
 function Turn-Right {
     $rover = Get-Rover
-    if ($rover.Direction -eq "N") 
-    {
-        Set-Rover -Direction "E"
+    $direction = switch ($rover.Direction) { 
+        "N" { "E" }
+        "E" { "S" }
+        "S" { "W" }
+        "W" { "N" }
     }
-    elseif ($rover.Direction -eq "E") {
-        Set-Rover -Direction "S"
-    }
+
+    Set-Rover -Direction $direction
 }
 
 

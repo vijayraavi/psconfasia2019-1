@@ -3,7 +3,7 @@ Describe "Get-Rover" {
         Get-Module MarsRover | Remove-Module
         Import-Module $PSScriptRoot/MarsRover.psm1
     }
-    
+
     It "Starts at 0,0,N" {
         $actual = Get-Rover
 
@@ -58,6 +58,21 @@ Describe "Move-Rover" {
         $actual = Get-Rover
 
         $actual.Direction | Should -Be $expected
+    }
+
+    It "Turns to right from 0,0,<direction>" -TestCases @( 
+        @{ Direction = "N"; Expected = "E" }
+        @{ Direction = "E"; Expected = "S" }
+        @{ Direction = "S"; Expected = "W" }
+        @{ Direction = "W"; Expected = "N" }
+    ) {
+        param ($Direction, $Expected)
+
+        Set-Rover -Direction $Direction
+        Move-Rover -Instruction "R"
+        $actual = Get-Rover
+
+        $actual.Direction | Should -Be $Expected
     }
 }
 
