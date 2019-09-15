@@ -16,6 +16,9 @@ function Move-Rover ($Instruction) {
     if ("R" -eq $Instruction) {
         Turn-Right
     }
+    if ("L" -eq $Instruction) {
+        Turn-Left
+    }
 }
 
 function Turn-Right {
@@ -30,6 +33,17 @@ function Turn-Right {
     Set-Rover -Direction $direction
 }
 
+function Turn-Left {
+    $rover = Get-Rover
+    $direction = switch ($rover.Direction) { 
+        "N" { "W" }
+        "W" { "S" }
+        "S" { "E" }
+        "E" { "N" }
+    }
+
+    Set-Rover -Direction $direction
+}
 
 Export-ModuleMember -Function @( 
     "Set-Rover"

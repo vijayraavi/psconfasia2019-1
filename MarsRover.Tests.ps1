@@ -74,5 +74,20 @@ Describe "Move-Rover" {
 
         $actual.Direction | Should -Be $Expected
     }
+
+    It "Turns to left from 0,0,<direction>" -TestCases @( 
+        @{ Direction = "N"; Expected = "W" }
+        @{ Direction = "W"; Expected = "S" }
+        @{ Direction = "S"; Expected = "E" }
+        @{ Direction = "E"; Expected = "N" }
+    ) {
+        param ($Direction, $Expected)
+
+        Set-Rover -Direction $Direction
+        Move-Rover -Instruction "L"
+        $actual = Get-Rover
+
+        $actual.Direction | Should -Be $Expected
+    }
 }
 
