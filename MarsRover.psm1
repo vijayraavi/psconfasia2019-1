@@ -30,16 +30,18 @@ function  Set-Rover {
 }
 
 function Move-Rover ($Instruction) {
-    if ("R" -eq $Instruction) {
-        Turn-Right
-    }
+    foreach ($i in $Instruction -split "") {
+        if ("R" -eq $i) {
+            Turn-Right
+        }
 
-    if ("L" -eq $Instruction) {
-        Turn-Left
-    }
+        if ("L" -eq $i) {
+            Turn-Left
+        }
 
-    if ("M" -eq $Instruction) {
-        Move-Forward
+        if ("M" -eq $i) {
+            Move-Forward
+        }
     }
 }
 

@@ -119,5 +119,24 @@ Describe "Move-Rover" {
         $rover.X | Should -Be $EndX -Because "X"
         $rover.Y | Should -Be $EndY -Because "Y"
     }
+
+    Context "Multiple instructions" {
+        It "Processes more than 1 instruction" -TestCases @( 
+            @{ 
+                Instructions = "LLMRM"
+                X = -1
+                Y = -1
+                Direction = "W" 
+            }
+        ) {
+            param ($Instructions, $X, $Y, $Direction)
+            Move-Rover -Instruction $Instructions
+
+            $rover = Get-Rover
+            $rover.Direction | Should -Be $Direction
+            $rover.X | Should -Be $X -Because "X"
+            $rover.Y | Should -Be $Y -Because "Y"
+        }
+    }
 }
 
