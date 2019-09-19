@@ -1,6 +1,5 @@
 # TASK 7 - write a client
-Get-Module MarsRover | Remove-Module
-Import-Module $PSScriptRoot/MarsRover.psm1
+. $PSScriptRoot/MarsRover.ps1
 
 $instructions = ''
 while ("Q" -ne $instructions) { 

@@ -1,23 +1,21 @@
 Describe "Get-Rover" {
     BeforeEach {
-        Get-Module MarsRover | Remove-Module
-        Import-Module $PSScriptRoot/MarsRover.psm1
+        . $PSScriptRoot/MarsRover.ps1
     }
 
     # TASK 1 - ICEBREAKER TEST 2
-    # It "Starts at 0,0,N" {
-    #     $actual = Get-Rover
+    It "Starts at 0,0,N" {
+        $actual = Get-Rover
 
-    #     $actual.X | Should -Be 0
-    #     $actual.Y | Should -Be 0
-    #     $actual.Direction | Should -Be "N"
-    # }
+        $actual.X | Should -Be 0
+        $actual.Y | Should -Be 0
+        $actual.Direction | Should -Be "N"
+    }
 }
 
 # Describe "Set-Rover" {
 #     BeforeEach {
-#         Get-Module MarsRover | Remove-Module
-#         Import-Module $PSScriptRoot/MarsRover.psm1
+#         . $PSScriptRoot/MarsRover.ps1
 #     }
 
 #     It "Sets the Direction" { 
@@ -41,11 +39,10 @@ Describe "Get-Rover" {
 
 Describe "Move-Rover" {
     BeforeEach {
-        Get-Module MarsRover | Remove-Module
-        Import-Module $PSScriptRoot/MarsRover.psm1
+        . $PSScriptRoot/MarsRover.ps1
     }
 
-    # TASK 1 - ice breaker test
+    ## TASK 1 - ice breaker test
     # It "Does nothing when it gets no instruction" {
     #     $expected = Get-Rover
 
@@ -58,7 +55,7 @@ Describe "Move-Rover" {
     #     $actual.Direction | Should -Be $expected.Direction
     # }
 
-    # TASK 2 - Turning right
+    ## TASK 2 - Turning right
     # It "Turns to right from 0,0,N" {
     #     $expected = "E"
 
@@ -78,7 +75,7 @@ Describe "Move-Rover" {
     #     $actual.Direction | Should -Be $expected
     # }
 
-    # TASK 3 - turning right from any direction
+    ## TASK 3 - turning right from any direction
     # It "Turns to right from 0,0,<direction>" -TestCases @( 
     #     @{ Direction = "N"; Expected = "E" }
     #     @{ Direction = "E"; Expected = "S" }
@@ -94,7 +91,7 @@ Describe "Move-Rover" {
     #     $actual.Direction | Should -Be $Expected
     # }
 
-    # TASK 4 - turning left from any direction
+    ## TASK 4 - turning left from any direction
     # It "Turns to left from 0,0,<direction>" -TestCases @( 
     #     @{ Direction = "N"; Expected = "W" }
     #     @{ Direction = "W"; Expected = "S" }
@@ -110,7 +107,7 @@ Describe "Move-Rover" {
     #     $actual.Direction | Should -Be $Expected
     # }
 
-    # TASK 5 - moving forward
+    ## TASK 5 - moving forward
     # It "Moves in the direction <direction>" -TestCases @(
     #     @{ X = 0; Y = 0; Direction = "N"; EndX = 0; EndY = 1 }
     #     @{ X = 0; Y = 0; Direction = "E"; EndX = 1; EndY = 0 }
@@ -129,7 +126,7 @@ Describe "Move-Rover" {
     #     $rover.Y | Should -Be $EndY -Because "Y"
     # }
 
-    # TASK 6 - consuming multiple instructions
+    ## TASK 6 - consuming multiple instructions
     # Context "Multiple instructions" {
     #     It "Processes more than 1 instruction" -TestCases @( 
     #         @{  Instructions = "LLMRM";
@@ -145,7 +142,7 @@ Describe "Move-Rover" {
     #     }
     # }
 
-    # TASK 8 - add obstacles 
+    ## TASK 8 - add obstacles 
     # Context "Obstacles" {
     #     It "Reports an obstacle when it encounters it" {
     #         $obstacles = @(@{ X = 0; Y = 1})
@@ -174,7 +171,7 @@ Describe "Move-Rover" {
     #     }
     # }
 
-    # TASK 9 - world wrapping
+    ## TASK 9 - world wrapping
     # Context "World wrapping" {  
     #     It "wraps around the Y axis on top" {    
     #         Move-Rover -Instruction ("M"*6)
