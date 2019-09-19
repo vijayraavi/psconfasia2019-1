@@ -46,9 +46,10 @@ Describe "Move-Rover" {
 
     It "Does nothing when it gets no instruction" {
         $expected = Get-Rover
-        Move-Rover 
-        $actual = Get-Rover
 
+        Move-Rover 
+
+        $actual = Get-Rover
         $actual | Should -Not -BeNullOrEmpty
         $actual.X | Should -Be $expected.X
         $actual.Y | Should -Be $expected.Y
@@ -57,18 +58,20 @@ Describe "Move-Rover" {
 
     It "Turns to right from 0,0,N" {
         $expected = "E"
-        Move-Rover -Instruction "R"
-        $actual = Get-Rover
 
+        Move-Rover -Instruction "R"
+
+        $actual = Get-Rover
         $actual.Direction | Should -Be $expected
     }
 
     It "Turns to right from 0,0,E" {
         $expected = "S"
         Set-Rover -Direction "E"
-        Move-Rover -Instruction "R"
-        $actual = Get-Rover
 
+        Move-Rover -Instruction "R"
+
+        $actual = Get-Rover
         $actual.Direction | Should -Be $expected
     }
 
@@ -79,11 +82,11 @@ Describe "Move-Rover" {
         @{ Direction = "W"; Expected = "N" }
     ) {
         param ($Direction, $Expected)
-
         Set-Rover -Direction $Direction
-        Move-Rover -Instruction "R"
-        $actual = Get-Rover
 
+        Move-Rover -Instruction "R"
+
+        $actual = Get-Rover
         $actual.Direction | Should -Be $Expected
     }
 
@@ -94,11 +97,11 @@ Describe "Move-Rover" {
         @{ Direction = "E"; Expected = "N" }
     ) {
         param ($Direction, $Expected)
-
         Set-Rover -Direction $Direction
-        Move-Rover -Instruction "L"
-        $actual = Get-Rover
 
+        Move-Rover -Instruction "L"
+
+        $actual = Get-Rover
         $actual.Direction | Should -Be $Expected
     }
 
@@ -122,12 +125,8 @@ Describe "Move-Rover" {
 
     Context "Multiple instructions" {
         It "Processes more than 1 instruction" -TestCases @( 
-            @{ 
-                Instructions = "LLMRM"
-                X = -1
-                Y = -1
-                Direction = "W" 
-            }
+            @{  Instructions = "LLMRM";
+                X = -1; Y = -1; Direction = "W" }
         ) {
             param ($Instructions, $X, $Y, $Direction)
             Move-Rover -Instruction $Instructions
@@ -136,6 +135,76 @@ Describe "Move-Rover" {
             $rover.Direction | Should -Be $Direction
             $rover.X | Should -Be $X -Because "X"
             $rover.Y | Should -Be $Y -Because "Y"
+        }
+    }
+
+    Context "Obstacles" {
+        It "Reports an obstacle when it encounters it" {
+            $obstacles = @(@{ X = 0; Y = 1})
+            
+            Set-RoverObstacle -Obstacle $obstacles
+            Move-Rover -Instruction "M"
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $true
+            $rover.Direction | Should -Be "N"
+            $rover.X | Should -Be 0 -Because "X"
+            $rover.Y | Should -Be 0 -Because "Y"
+        }
+
+        It "Reports no obstacle when there is none" {
+            $obstacles = @(@{ X = 1; Y = 0})
+            
+            Set-RoverObstacle -Obstacle $obstacles
+            Move-Rover -Instruction "M"
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $false
+            $rover.Direction | Should -Be "N"
+            $rover.X | Should -Be 0 -Because "X"
+            $rover.Y | Should -Be 1 -Because "Y"
+        }
+    }
+
+    Context "World wrapping" {  
+        It "wraps around the Y axis on top" {    
+            Move-Rover -Instruction ("M"*6)
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $false
+            $rover.Direction | Should -Be "N"
+            $rover.X | Should -Be 0 -Because "X"
+            $rover.Y | Should -Be -5 -Because "we moved to the edge and wrapped back"
+        }
+
+        It "wraps around the Y on the bottom" {    
+            Move-Rover -Instruction ("LL"+"M"*6)
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $false
+            $rover.Direction | Should -Be "S"
+            $rover.X | Should -Be 0 -Because "X"
+            $rover.Y | Should -Be 5 -Because "we moved to the edge and wrapped back"
+        }
+
+        It "wraps around the X axis on right" {    
+            Move-Rover -Instruction ("R"+"M"*6)
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $false
+            $rover.Direction | Should -Be "E"
+            $rover.X | Should -Be -5 -Because "X"
+            $rover.Y | Should -Be 0 -Because "we moved to the edge and wrapped back"
+        }
+
+        It "wraps around the X axis on left" {    
+            Move-Rover -Instruction ("L"+"M"*6)
+
+            $rover = Get-Rover
+            $rover.PathBlocked | Should -Be $false
+            $rover.Direction | Should -Be "W"
+            $rover.X | Should -Be 5 -Because "X"
+            $rover.Y | Should -Be 0 -Because "we moved to the edge and wrapped back"
         }
     }
 }

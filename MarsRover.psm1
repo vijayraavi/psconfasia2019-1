@@ -2,6 +2,7 @@ $script:rover = [PSCustomObject]@{
     X = 0
     Y = 0
     Direction = "N"
+    PathBlocked = $false
 }
 function Get-Rover () {
     $script:rover
@@ -29,7 +30,7 @@ function  Set-Rover {
     }
 }
 
-function Move-Rover ($Instruction) {
+function Move-Rover ($Instruction, $Obstacle) {
     foreach ($i in $Instruction -split "") {
         if ("R" -eq $i) {
             Turn-Right
@@ -72,16 +73,47 @@ function Turn-Left {
 function Move-Forward {
     $rover = Get-Rover
 
-    switch ($rover.Direction) {
-        "N" { $rover.Y++ }
-        "E" { $rover.X++ }
-        "S" { $rover.Y-- }
-        "W" { $rover.X-- }
+    $nextStep = switch ($rover.Direction) {
+        "N" { @{ Y = $rover.Y + 1; X = $rover.X; } }
+        "E" { @{ Y = $rover.Y;     X = $rover.X + 1; } }
+        "S" { @{ Y = $rover.Y - 1; X = $rover.X; } }
+        "W" { @{ Y = $rover.Y;     X = $rover.X - 1; } }
+    }
+
+    # wrapping world
+    if ($nextStep.Y -eq 6) {
+        $nextStep.Y = -5
+    }
+    if ($nextStep.Y -eq -6) {
+        $nextStep.Y = 5
+    } 
+    if ($nextStep.X -eq 6) {
+        $nextStep.X = -5
+    }
+    if ($nextStep.X -eq -6) {
+        $nextStep.X = 5
+    } 
+
+    # detecting obstacles
+    $o = $script:obstacles | where { $_.X -eq $nextStep.X -and $_.Y -eq $nextStep.Y }
+    
+    $rover.PathBlocked = $null -ne $o
+    if ($rover.PathBlocked) {    
+        return
+    }
+    else {
+        $rover.X = $nextStep.X
+        $rover.Y = $nextStep.Y
     }
 }
 
+function Set-RoverObstacle ($Obstacle) {
+    $script:obstacles = $Obstacle
+}
+ 
 Export-ModuleMember -Function @( 
     "Set-Rover"
     "Get-Rover"
     "Move-Rover"
+    "Set-RoverObstacle"
 )
